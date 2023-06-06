@@ -40,13 +40,15 @@ def get_msg(address):
     json_data = {
         'address': address,
     }
-    try:
-        response = session.post('https://starrynift.art/api/user/challenge', json=json_data)
-        msg = json.loads(response.text)['data']['message']
-        return msg, session
-    except Exception as e:
-        logger.error(f'{address} - {e}')
-        time.sleep(3)
+    while True:
+        try:
+            response = session.post('https://starrynift.art/api/user/challenge', json=json_data)
+            if response.status_code in [200, 201]:
+                msg = json.loads(response.text)['data']['message']
+                return msg, session
+        except Exception as e:
+            logger.error(f'{address} - {e}')
+            time.sleep(3)
 
 
 def check_status_tx(tx_hash,address,w3):
